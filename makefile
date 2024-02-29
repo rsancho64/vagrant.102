@@ -2,4 +2,7 @@ up: kill
 	vagrant up
 
 kill:
-	vagrant destroy mymv -f
+# vagrant destroy «myvm -f
+	vagrant destroy -f
+
+	

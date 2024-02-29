@@ -83,34 +83,30 @@ indica  que queremos utilizar la imagen `ubuntu/xenial64` como base para nuest
 
 Por defecto, Vagrant inicia la MV sin interfaz gráfica. Podemos accederla via ssh: **`vagrant ssh`** da un prompt a la MV.
 
-Además y por defecto, Vagrant configura el **`.`** (directorio donde está el `Vagrantfile` **y** desde se hizo el `vagrant init`) como un directorio compartido con la MV. ,, todo fichero que dejemos en este será accesible por la MV y viceversa.
+Además y por defecto, Vagrant configura el **`.`** (directorio donde está el `Vagrantfile` **y** desde se hizo el `vagrant init`) como un directorio compartido con la MV. ,, todo fichero que dejemos en este será accesible por la MV y viceversa. 
 
-- [ ] sincronización no visible @ ubuntu 230.4 vagrant version 2.4.1 (parece ser latest)
+El mapeo en la mv es **en `/vagrant`** (**ojo: no en** `/home/vagrant` y no se ve en la configuracion de carpetas compartidas de la máquina que refleja VirtualBox.
 
-hago `sudo apt --no-install-recommends install virtualbox-guest-utils` ([stackoverflow](https://stackoverflow.com/questions/38229791/default-shared-folder-in-vagrant-not-visible)); destroy y up ...
+- [x] innecesario?: `sudo apt --no-install-recommends install virtualbox-guest-utils` ([stackoverflow](https://stackoverflow.com/questions/38229791/default-shared-folder-in-vagrant-not-visible)); `destroy` y `up` ...
 
-
-
-En la MV, su ruta es **`/vagrant`**. Así pues, una vez conectados por SSH con la MV, podemos:
-
-Si ejecutamos el comando «ls», podremos ver, además, todos los ficheros del directorio compartido. Este directorio compartido es de gran utilidad, ya que si configuramos, por ejemplo, nuestra MV como un servidor web, podemos dejar en él los ficheros que queramos que el servidor procese y trabajar sobre ellos desde la máquina "host". 
+Este directorio compartido es de gran utilidad, ya que si configuramos, por ejemplo, nuestra MV como un servidor web, podemos dejar en él los ficheros que queramos que el servidor procese y trabajar sobre ellos desde la máquina "host".
 
 ### Parando la MV
 
 Una vez que hayamos terminado de trabajar con la máquina podemos ejecutar los siguientes comandos:
 
-- «vagrant suspend»: Pausa la MV, guardando el estado actual en el disco duro. Permite arrancar de nuevo la máquina muy
-    rápidamente con «vagrant up» con el estado exacto en el que se quedó.
-- «vagrant halt»: Realiza un apagado controlado de la MV (igual a apagar una máquina física). Como en el caso anterior,
-    podemos volver a arrancar la MV con «vagrant up», aunque en este caso el arranque es más lento que al hacer un
-    «suspend» (ya que tiene que volver a iniciar el OS).
-- «vagrant destroy»: Destruye la MV y todo su contenido.
+**`vagrant suspend`**: Pausa la MV, guardando estado actual en disco duro. Permite arrancarla de nuevo muy rápidamente con `vagrant up` con el estado exacto en el que se quedó.
 
-Como podemos observar en estas breves indicaciones Vagrant nos permite realizar entornos virtuales muy sencillos con dos o tres comandos. Ahora os vamos a enseñar cómo modificar nuestro fichero vagrantfile, para que nuestra máquina posea muchas más funcionalidades. Además, podremos combinar «vagrant» con otras herramientas para que consigamos así un entorno de dev elaborado.
+**`vagrant halt`**: apagado controlado de la MV Como en el caso anterior, podemos volver a arrancar la MV con «vagrant up», aunque en este caso el arranque es más lento que al hacer un (tiene que volver a iniciar el OS).
+
+**`vagrant destroy`**: Destruye la MV y todo su contenido.
 
 ## Vagrant file: archivo para configuración de máquinas virtuales con Vagrant
 
-La configuración de un escenario concreto se realiza de forma bastante simple mediante modificaciones en este fichero, que está escrito en formato Ruby. Realmente la configuración que se aplica es la aplicación en serie de varios Vagranfiles, tal como se explica en **Load Order and Merging**, aunque lo más habitual es que se cargue el Vagrantfile que incluye el box y el que exista en el directorio de trabajo, siendo este último el que se modifica en la mayoría de los casos.
+Muchos ajustes [aqui](https://developer.hashicorp.com/vagrant/docs/providers/virtualbox/configuration) 
+
+La configuración de un escenario concreto se realiza de forma bastante simple mediante modificaciones en este fichero Ruby. Lo habitual es que se cargue el Vagrantfile que incluye el box y el que exista en el directorio de trabajo, siendo este último el que se modifica en la mayoría de los casos.
+también se pude hacer "configuración en cascada" (aplicar varios Vagrantfiles, como se explica en **Load Order and Merging**)
 
 ### Modificaciones de la MV
 
