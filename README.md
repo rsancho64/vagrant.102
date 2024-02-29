@@ -1,49 +1,62 @@
+# vagrant 102
+
+## stuff 
+
+From **[here](https://www.redeszone.net/tutoriales/servidores/vagrant-instalacion-configuracion-ejemplos/)**
+
 ## previo
 
 https://www.digitalocean.com/community/tutorials/how-to-install-ruby-on-rails-with-rbenv-on-ubuntu-22-04
 
 TOC
 
-- [previo](#previo)
-- [¿Qué es Vagrant y para qué sirve?](#qué-es-vagrant-y-para-qué-sirve)
-- [**Primeros pasos con Vagrant**](#primeros-pasos-con-vagrant)
-  - [**Instalación y creación de una MV básica**](#instalación-y-creación-de-una-mv-básica)
-  - [**Acceso a la MV**](#acceso-a-la-mv)
-  - [Parando la MV](#parando-la-mv)
-- [Vagrant file: archivo para configuración de máquinas virtuales con Vagrant](#vagrant-file-archivo-para-configuración-de-máquinas-virtuales-con-vagrant)
-  - [Modificaciones de la MV](#modificaciones-de-la-mv)
-  - [Vagrantfiles modificados para virtualización de máquinas](#vagrantfiles-modificados-para-virtualización-de-máquinas)
-  - [Configurar MV disco adicional de 500 GiB](#configurar-mv-disco-adicional-de-500-gib)
-- [Otras funcionalidades de Vagrant:](#otras-funcionalidades-de-vagrant)
-- [Rendimiento de Vagrant](#rendimiento-de-vagrant)
-- [Alternativas a Vagrant](#alternativas-a-vagrant)
+- [vagrant 102](#vagrant-102)
+  - [stuff](#stuff)
+  - [previo](#previo)
+  - [qué y para que](#qué-y-para-que)
+  - [**Primeros pasos con Vagrant**](#primeros-pasos-con-vagrant)
+    - [**Instalación y creación de una MV básica**](#instalación-y-creación-de-una-mv-básica)
+    - [**Acceso a la MV**](#acceso-a-la-mv)
+    - [Parando la MV](#parando-la-mv)
+  - [Vagrant file: archivo para configuración de máquinas virtuales con Vagrant](#vagrant-file-archivo-para-configuración-de-máquinas-virtuales-con-vagrant)
+    - [Modificaciones de la MV](#modificaciones-de-la-mv)
+    - [Vagrantfiles modificados para virtualización de máquinas](#vagrantfiles-modificados-para-virtualización-de-máquinas)
+    - [Configurar MV disco adicional de 500 GiB](#configurar-mv-disco-adicional-de-500-gib)
+  - [Otras funcionalidades de Vagrant:](#otras-funcionalidades-de-vagrant)
+  - [Rendimiento de Vagrant](#rendimiento-de-vagrant)
+  - [Alternativas a Vagrant](#alternativas-a-vagrant)
+  - [post](#post)
 
-## ¿Qué es Vagrant y para qué sirve?
+## qué y para que
 
-Vagrant es un sw de código abierto que permite crear/mantener dev-envs portables; puede trabajar con VMware, VirtualBox, Hyper-V, KVM, AWS e incluso contenedores Docker, por tanto, es ideal para simplificar la configuración de estos sw de virtualización. Escrito en Ruby, permite utilizar otros LPs sin problema.
+Vagrant es un sw opensource que permite crear/mantener [dev-]envs portables; puede trabajar con VMware, VirtualBox, Hyper-V, KVM, AWS e incluso contenedores Docker, por tanto, es ideal para simplificar configs de virtualización. 
 
-Los mencionados **archivos de configuración son denominados Vagrantfiles**, estos Vagrantfiles pueden ser compartidos entre
-desarrolladores para replegar en sus equipos máquinas virtuales ya creadas. La utilización de Vagrant en dev es útil en equipos -varias personas-: permite garantizar que todos los integrantes trabajan con el mismo dev-env.
+Escrito en Ruby, permite utilizar otros LPs sin problema.
 
-Además de solucionar problemas de compatibilidades de sw con algunos OSs, nos permite que nuestros proyectos vayan acompañados de su entorno configurado, ya que los ficheros de configuración son archivos de texto plano y pueden ser versionados en plataformas como Git o subversión. Esto permite incorporar personas en un proyecto comenzado: tan solo descargar del repositorio, el proyecto, y ejecutar la orden Vagrant, con ello ya tendría listo su entorno de dev para trabajar en el equipo.
+Los mencionados **archivos de configuración son denominados Vagrantfiles**, estos pueden ser compartidos entre desarrolladores para replegar en sus equipos MVs creadas. La utilización de Vagrant en dev es útil en equipos -varias personas- : permite garantizar que todos los integrantes trabajan con el mismo dev-env.
 
-Por defecto el comando Vagrant trabaja con VirtualBox, VirtualBox es un sw de virtualización para la creación de máquinas virtuales. Pero Vagrant no nos limita solo a VirtualBox, podemos usar también VMware Workstation en Windows y VMware Fusion en MacOS, pero en MacOS además necesitamos un plugin de pago. A veces, algunas Boxes (entornos creados con Vagrant), podemos ejecutarlos en Parallels Desktop, otro asistente de virtualización pero este es de pago.
+Además de solucionar problemas de compatibilidades de sw con algunos OSs, permite a nuestros proyectos anexar sus entornos configurados, ya que los ficheros de configuración son archivos de texto plano y pueden ser versionados (git). Esto permite incorporar personas en un proyecto comenzado (descargar ejecutar Vagrant y tener listo el entorno dev para trabajar en el equipo.
 
-En cuanto a la arquitectura de Vagramt, utiliza «Provisioners» y también «Providers» como bloques de construcción para los dev-envs. Estos «Provisioners» son herramientas para que los usuarios puedan personalizar su configuración en entornos virtuales. Los «Providers» son los servicios que usa Vagrant internamente para configurar y crear los entornos virtuales. Un detalle importante es que Vmware y AWS son soportados a través de plugins, pero no de forma nativa.
+Por defecto Vagrant trabaja con VirtualBox, sw de virtualización. Podemos usar también VMware WS en Windows y VMware Fusion en MacOS, pero en MacOS además necesitamos un plugin de pago. Algunas Boxes (entornos creados con Vagrant), podemos ejecutarlos en Parallels Desktop, otro asistente de virtualización pero este es de pago.
 
-Otro aspecto muy destacable de Vagrant es la gran comunidad que hay detrás de esta herramienta, podremos acceder a una sección de «Docs» donde tendremos toda la documentación de la herramienta explicada en detalle, además, también tenemos una sección de «Community» donde podremos poner en los foros nuestras dudas. Por supuesto, este proyecto está más vivo que nunca, y tendremos desde la web oficial un enlace al proyecto oficial de GitHub donde podremos acceder al código fuente, ver los fallos o bugs que hay y que se han solucionado, y poner dudas sobre el funcionamiento de una determinada función y mucho más. Por último, Vagrant es ampliamente utilizado por empresas tan conocidas como Mozilla, Expedia, Nokia o Disqus para el dev interno de sus propias herramientas.
+Arquitectura: Vagrant utiliza como bloques de construcción para los dev-envs:
+
+- *Provisioners*: herramientas para que los usuarios puedan personalizar su configuración en venvs.
+- *Providers*: servicios que usa Vagrant internamente para configurar/crear los venvs.
+- 
+Detalle importante: Vmware y AWS son soportados a via plugins, no de forma nativa.
+
+Otro aspecto destacable de Vagrant: gran comunidad. podremos acceder a una sección de «Docs» donde tendremos toda la documentación de la herramienta explicada en detalle, además, también tenemos una sección de «Community» donde podremos poner en los foros nuestras dudas. Por supuesto, este proyecto está más vivo que nunca, y tendremos desde la web oficial un enlace al proyecto oficial de GitHub donde podremos acceder al código fuente, ver los fallos o bugs que hay y que se han solucionado, y poner dudas sobre el funcionamiento de una determinada función y mucho más. 
+
+Por último, Vagrant es ampliamente utilizado por empresas tan conocidas como Mozilla, Expedia, Nokia o Disqus para el dev interno de sus propias herramientas.
 
 ## **Primeros pasos con Vagrant**
 
 ### **Instalación y creación de una MV básica**
 
-El primer paso, como es habitual, es **descargar e instalar*****Vagrant***. Para ello, vas a tener acceder a su página web
-oficial que encontrarás directamente en el siguiente [**enlace**](https://www.vagrantup.com/downloads.html)y además instalar
-el proveedor de máquinas virtuales que queramos utilizar, que por defecto será **[*VirtualBox*](https://www.virtualbox.org/wiki/Downloads)**, ya que es gratuito y viene integrado en *Vagrant*.
+El primer paso, como es habitual, es **descargar e instalar*****Vagrant***. Para ello, vas a tener acceder a su página web oficial que encontrarás directamente en el siguiente [**enlace**](https://www.vagrantup.com/downloads.html)y además instalar el proveedor de máquinas virtuales que queramos utilizar, que por defecto será **[*VirtualBox*](https://www.virtualbox.org/wiki/Downloads)**, ya que es gratuito y viene integrado en *Vagrant*.
 
-A Vagrant, además de ser instalado a través de la GUI, podemos instalarlo desde CLI 
-
-linux: distribuciones derivadas de Debian: `sudo apt install vagrant`
+A Vagrant, además de ser instalado a través de la GUI, podemos instalarlo desde CLI linux: distribuciones derivadas de Debian: `sudo apt install vagrant`
 
 Una vez instalado, podremos ejecutar el comando **`vagrant`** para obtener un listado de las opciones. Además de que te servirá para verificar que la app de este sw está instalada correctamente.
 
@@ -57,24 +70,28 @@ Tras ejecutar estos comandos, `vagrant init` descargará/instalará una MV de Vi
 
 ```rb
 VAGRANTFILE_API_VERSION = «2»
-Vagrant.configure(VAGRANTFILE_API_VERSION) do \|config\|
-config.vm.box = «ubuntu/xenial64»
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+    config.vm.box = «ubuntu/xenial64»
 end
 ```
 
-De este fichero hablaremos más en profundidad en las siguientes secciones. En este momento sólo hay que saber que en el vagrantfile
-estamos indicando a *Vagrant* que queremos utilizar la imagen 'ubuntu/xenial64*′* como base para nuestra MV.
+indica  que queremos utilizar la imagen `ubuntu/xenial64` como base para nuestra MV.
 
-El segundo comando, **'vagrant up'**, descarga, instala, configura y arranca la MV. *Vagrant* descarga las imágenes base de las máquinas virtuales. En el repositorio de boxes hay multitud de imágenes de diferentes OSs y podremos utilizar la que más se ajuste a nuestras necesidades. Estas imágenes base contienen instalaciones básicas del correspondiente OS, que *Vagrant* clona para crear nuestras máquinas virtuales. Gracias a este modo de funcionamiento, la creación y arranque de las máquinas virtuales es mucho más rápida y sencilla.
-
-Una vez que el comando **'vagrant up'** termine, tendremos la MV arrancada y lista para trabajar con ella. Por lo que será el momento de continuar con el siguiente proceso en cuestión que os vamos a explicar en las siguientes líneas.
+**`vagrant up`**, descarga -imagenes base-, instala, configura y arranca la MV. En el repo de boxes hay multitud de imágenes de diferentes OSs y podremos utilizar la que más se ajuste a nuestras necesidades. Contienen instalaciones básicas que *Vagrant* clona para crear nuestra máquina virtual. Ojo, las imagenes son "como son" si bien hay canales oficiales.
 
 ### **Acceso a la MV**
 
-Por defecto, Vagrant inicia la MV sin interfaz gráfica. Sin embargo, podemos acceder a ella mediante SSH con el comando «vagrant ssh». Lo que nos permitirá tener acceso a la línea de comandos de la MV y podremos hacer todo lo habitual en una máquina GNU/Linux. Para que te quede más claro, este comando te da la oportunidad de establecer conexión mediante SSH a la MV que has creado.
+Por defecto, Vagrant inicia la MV sin interfaz gráfica. Podemos accederla via ssh: **`vagrant ssh`** da un prompt a la MV.
 
-Además, por defecto, Vagrant configura el directorio actual (el directorio desde donde se ha hecho «vagrant init» y donde está el
-fichero Vagrantfile) como un directorio compartido con la MV. Esto quiere decir que todos los ficheros que dejemos en ese directorio, serán accesibles por la MV y viceversa. En la MV, este directorio compartido se encuentra por defecto en la ruta '/vagrant'. Así pues, una vez conectados por SSH con la MV, podemos hacer:
+Además y por defecto, Vagrant configura el **`.`** (directorio donde está el `Vagrantfile` **y** desde se hizo el `vagrant init`) como un directorio compartido con la MV. ,, todo fichero que dejemos en este será accesible por la MV y viceversa.
+
+- [ ] sincronización no visible @ ubuntu 230.4 vagrant version 2.4.1 (parece ser latest)
+
+hago `sudo apt --no-install-recommends install virtualbox-guest-utils` ([stackoverflow](https://stackoverflow.com/questions/38229791/default-shared-folder-in-vagrant-not-visible)); destroy y up ...
+
+
+
+En la MV, su ruta es **`/vagrant`**. Así pues, una vez conectados por SSH con la MV, podemos:
 
 Si ejecutamos el comando «ls», podremos ver, además, todos los ficheros del directorio compartido. Este directorio compartido es de gran utilidad, ya que si configuramos, por ejemplo, nuestra MV como un servidor web, podemos dejar en él los ficheros que queramos que el servidor procese y trabajar sobre ellos desde la máquina "host". 
 
@@ -259,4 +276,13 @@ Por lo general, Vagrant es **una herramienta muy completa**, pero puede ser que 
 Como puedes ver, son muchas las posibilidades que tenemos a la hora de elegir las mejores herramientas. Lo mejor que podemos hacer, es contrastar lo que necesitamos con las funcionalidades de cada una. De esta forma, tendremos que la mejor se ajusta a nuestras necesidades.
 
 SEE ALSO [THIS](https://www.youtube.com/watch?v=GhYm4IvkLQA)
+
+
+
+## post
+
+@windows
+https://www.youtube.com/watch?v=GhYm4IvkLQA
+
+
 
