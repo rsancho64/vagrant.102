@@ -1,6 +1,6 @@
 # vagrant 102
 
-## stuff 
+## stuff
 
 From **[here](https://www.redeszone.net/tutoriales/servidores/vagrant-instalacion-configuracion-ejemplos/)**
 
@@ -20,7 +20,7 @@ TOC
     - [Parando la MV](#parando-la-mv)
   - [Vagrant file: archivo para configuración de máquinas virtuales con Vagrant](#vagrant-file-archivo-para-configuración-de-máquinas-virtuales-con-vagrant)
     - [Modificaciones de la MV](#modificaciones-de-la-mv)
-    - [Vagrantfiles modificados para virtualización de máquinas](#vagrantfiles-modificados-para-virtualización-de-máquinas)
+    - [Vagrantfiles modificados. cuotas y modo grafico](#vagrantfiles-modificados-cuotas-y-modo-grafico)
     - [Configurar MV disco adicional de 500 GiB](#configurar-mv-disco-adicional-de-500-gib)
   - [Otras funcionalidades de Vagrant:](#otras-funcionalidades-de-vagrant)
   - [Rendimiento de Vagrant](#rendimiento-de-vagrant)
@@ -58,30 +58,30 @@ El primer paso, como es habitual, es **descargar e instalar*****Vagrant***. Par
 
 A Vagrant, además de ser instalado a través de la GUI, podemos instalarlo desde CLI linux: distribuciones derivadas de Debian: `sudo apt install vagrant`
 
-Una vez instalado, podremos ejecutar el comando **`vagrant`** para obtener un listado de las opciones. Además de que te servirá para verificar que la app de este sw está instalada correctamente.
+Una vez instalado, podremos ejecutar el comando **`vagrant`** para un check y listado de opciones.
 
-Por otro lado, para la creación de una maquína virtual podemos recurrir a su [**web de Boxes**](https://app.vagrantup.com/boxes/search) y elegir la más conveniente en el ejemplo lo haremos con Ubuntu xenial.
+Por otro lado, para la creación de una MV podemos recurrir a su [**web de Boxes**](https://app.vagrantup.com/boxes/search) y elegir la más conveniente en el ejemplo lo haremos con Ubuntu xenial.
 
 ```sh
 vagrant init ubuntu/xenial64
 ```
 
-Tras ejecutar estos comandos, `vagrant init` descargará/instalará una MV de VirtualBox con el OS Ubuntu 16.04 LTS 64-bit. Luego genera el fichero de configuración "**Vagrantfile**" (en `.`) y tendrá un contenido similar al siguiente.
+Tras estos comandos, `vagrant init` descargará/instalará una MV de VirtualBox con el OS Ubuntu 16.04 LTS 64-bit. Luego, genera el fichero de configuración "**Vagrantfile**" (en `.`) y tendrá un contenido similar al siguiente.
 
 ```rb
-VAGRANTFILE_API_VERSION = «2»
+VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-    config.vm.box = «ubuntu/xenial64»
+    config.vm.box = "ubuntu/xenial64"
 end
 ```
 
-indica  que queremos utilizar la imagen `ubuntu/xenial64` como base para nuestra MV.
+indica que queremos utilizar la imagen `ubuntu/xenial64` como base para nuestra MV.
 
-**`vagrant up`**, descarga -imagenes base-, instala, configura y arranca la MV. En el repo de boxes hay multitud de imágenes de diferentes OSs y podremos utilizar la que más se ajuste a nuestras necesidades. Contienen instalaciones básicas que *Vagrant* clona para crear nuestra máquina virtual. Ojo, las imagenes son "como son" si bien hay canales oficiales.
+**`vagrant up`**, descarga -imagenes base-, instala, configura y arranca la MV. En el repo de boxes hay multitud de imágenes de diferentes OSs y podremos utilizar la que más nos ajuste. Contienen instalaciones básicas que *Vagrant* clona para crear nuestra MV. Ojo, las imagenes son "como son" si bien hay canales oficiales.
 
 ### **Acceso a la MV**
 
-Por defecto, Vagrant inicia la MV sin interfaz gráfica. Podemos accederla via ssh: **`vagrant ssh`** da un prompt a la MV.
+Por defecto Vagrant inicia la MV sin GUI. Podemos accederla via ssh: **`vagrant ssh`** da un prompt a la MV.
 
 Además y por defecto, Vagrant configura el **`.`** (directorio donde está el `Vagrantfile` **y** desde se hizo el `vagrant init`) como un directorio compartido con la MV. ,, todo fichero que dejemos en este será accesible por la MV y viceversa. 
 
@@ -110,43 +110,44 @@ también se pude hacer "configuración en cascada" (aplicar varios Vagrantfiles,
 
 ### Modificaciones de la MV
 
-Se configuran en el espacio de nombres «config.vm», prefijo que antecede a los parámetros en este caso, por ejemplo, para modificar el hostname de la máquina utilizaríamos:
+Se configuran en el espacio de nombres `config.vm` prefijo que antecede a los parámetros. Ej: modificar el hostname de la máquina:
 
 `config.vm.hostname = "redeszone"`
 
-El resto de parámetros que se pueden modificar los encontramos en la documentación de **Vagrant: Machine Settings**, dejando en nuestro caso para secciones posteriores algunos de los aspectos que necesitan más dev, como la configuración de la red, o la configuración integrada de la MV mediante shell scripts o mediante aplicaciones como ansible o puppet.
+El resto de parámetros que se pueden modificar los encontramos en la doc **Vagrant: Machine Settings**, (dejamos ahora aspectos como configuración de la red, o la configuración integrada de la MV mediante shell scripts o mediante apps como ansible o puppet.
 
-Parámetros relativos a las características de hardware de la MV dependen del proveedor en Vagrant, y en el caso de VirtualBox se definen mediante una subsección, veamos de forma prácticas algunos ejemplos de configuración de los ficheros Vagrantfiles.
+Parámetros relativos a las características de hw hardware de la MV dependen del proveedor en Vagrant, y en el caso de VirtualBox se definen mediante una subsección, veamos de forma prácticas algunos ejemplos de configuración de los ficheros Vagrantfiles.
 
-### Vagrantfiles modificados para virtualización de máquinas
+### Vagrantfiles modificados. cuotas y modo grafico
 
-Realiza las modificaciones apropiadas en un Vagrantfile para cambiar el nombre de la MV, la memoria RAM asignada y el número de núcleos virtuales.
+Cabe cambiar el nombre de la MV, asignar RAM y CPUs -número de núcleos virtuales-. Y la forma habitual de gestionar MVs en Vagrant es mediante la línea de comandos y via ssh,, no tiene mucho sentido una interfaz gráfica, pero en algunas ocasiones es conveniente. 
+
 
 ```rb
-> config.vm.provider «virtualbox» do \|vb\|
-> vb.name = «nombre»
-> vb.memory = «512»
-> vb.cpus = 2
-> end
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+VAGRANTFILE_API_VERSION = 2
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "ubuntu/xenial64"
+  config.vm.provider :virtualbox do |vb|
+    vb.name = "myvm"
+    vb.memory = 2048
+    vb.cpus = 4
+    vb.gui = true
+    # vb.linked_clone = true
+  end
+end
 ```
 
-Como la forma habitual de gestionar máquinas virtuales en Vagrant es mediante la línea de comandos, y accediendo a ellas a través de SSH, no tiene mucho sentido que se arranque una interfaz gráfica, pero en algunas ocasiones es conveniente. Modifica un fichero Vagrantfile para que se inicie la interfaz gráfica de usuario al levantar la máquina.
+El aprovisionamiento ligero (thin provisioning) es técnica general en sistemas de virtualización. Consiste en crear un disco de imagen de MV que incluya sólo las modificaciones respecto a una imagen base. Esto implica ahorro significativo de espacio en disco a costa de rendimiento. 
+
+Un Vagrantfile para que se realice aprovisionamiento ligero:
 
 ```rb
-> config.vm.provider «virtualbox» do \|vb\|
-> vb.gui = true
-> end
-```
-
-Aprovisionamiento ligero (thin provisioning) es una técnica muy utilizada en diferentes sistemas de virtualización, y consiste en crear un disco de imagen de MV que incluya sólo las modificaciones respecto a una imagen base, consiguiendo un ahorro
-significativo de espacio en disco a costa de una pequeña penalización en rendimiento. Configura un Vagrantfile para que se realice
-aprovisionamiento ligero.
-
-```rb
-> config.vm.provider «virtualbox» do \|vb\|
-> vb.name = «ligera»
-> vb.linked_clone = true
-> end
+config.vm.provider "virtualbox" do |vb|
+  vb.name = "ligera"
+  vb.linked_clone = true
+end
 ```
 
 Por otra parte, si se quiere ejecutar sobre una máquina el bloque de aprovisionamiento, el comando a usar es 'vagrant provision'. Aunque la configuración completa de las redes lo dejamos para una sección posterior, una funcionalidad muy útil y sencilla es la redirección de puertos de la red por defecto que utiliza Vagrant (red interna con NAT). Configura un Vagrantfile para que las peticiones al puerto 8080/tcp de la máquina anfitriona se redirijan al puerto 80/tcp de la MV.
