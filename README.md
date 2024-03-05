@@ -1,6 +1,6 @@
 # vagrant 102
 
-## stuff
+## stuff 
 
 From **[here](https://www.redeszone.net/tutoriales/servidores/vagrant-instalacion-configuracion-ejemplos/)**
 
@@ -20,7 +20,7 @@ TOC
     - [Parando la MV](#parando-la-mv)
   - [Vagrant file: archivo para configuración de máquinas virtuales con Vagrant](#vagrant-file-archivo-para-configuración-de-máquinas-virtuales-con-vagrant)
     - [Modificaciones de la MV](#modificaciones-de-la-mv)
-    - [Vagrantfiles modificados. cuotas y modo grafico](#vagrantfiles-modificados-cuotas-y-modo-grafico)
+    - [Vagrantfiles modificados para virtualización de máquinas](#vagrantfiles-modificados-para-virtualización-de-máquinas)
     - [Configurar MV disco adicional de 500 GiB](#configurar-mv-disco-adicional-de-500-gib)
   - [Otras funcionalidades de Vagrant:](#otras-funcionalidades-de-vagrant)
   - [Rendimiento de Vagrant](#rendimiento-de-vagrant)
@@ -29,15 +29,13 @@ TOC
 
 ## qué y para que
 
-Vagrant es un sw opensource que permite crear/mantener [dev-]envs portables; puede trabajar con VMware, VirtualBox, Hyper-V, KVM, AWS e incluso contenedores Docker, por tanto, es ideal para simplificar configs de virtualización. 
+Vagrant es un sw opensource escrito en Ruby -permite otros LPs sin problema-. ~ Crear/mantener [dev-]envs portables; puede trabajar con VMware, VirtualBox, Hyper-V, KVM, AWS e incluso contenedores Docker. Por tanto es ideal para simplificar configs de virtualización.
 
-Escrito en Ruby, permite utilizar otros LPs sin problema.
-
-Los mencionados **archivos de configuración son denominados Vagrantfiles**, estos pueden ser compartidos entre desarrolladores para replegar en sus equipos MVs creadas. La utilización de Vagrant en dev es útil en equipos -varias personas- : permite garantizar que todos los integrantes trabajan con el mismo dev-env.
+Los archivos de config -**Vagrantfiles**- pueden ser compartidos entre desarrolladores para desplegar en sus equipos MVs creadas. Usar Vagrant en dev es útil en equipos -varias personas- : permite garantizar que todos los integrantes trabajan con el mismo dev-env.
 
 Además de solucionar problemas de compatibilidades de sw con algunos OSs, permite a nuestros proyectos anexar sus entornos configurados, ya que los ficheros de configuración son archivos de texto plano y pueden ser versionados (git). Esto permite incorporar personas en un proyecto comenzado (descargar ejecutar Vagrant y tener listo el entorno dev para trabajar en el equipo.
 
-Por defecto Vagrant trabaja con VirtualBox, sw de virtualización. Podemos usar también VMware WS en Windows y VMware Fusion en MacOS, pero en MacOS además necesitamos un plugin de pago. Algunas Boxes (entornos creados con Vagrant), podemos ejecutarlos en Parallels Desktop, otro asistente de virtualización pero este es de pago.
+Por defecto Vagrant trabaja con VirtualBox, como sw de virtualización. Podemos usar también VMware WS en Windows y VMware Fusion en MacOS, pero en MacOS además necesitamos un plugin de pago. Algunas Boxes (entornos creados con Vagrant), podemos ejecutarlos en Parallels Desktop, otro asistente de virtualización pero este es de pago.
 
 Arquitectura: Vagrant utiliza como bloques de construcción para los dev-envs:
 
@@ -46,7 +44,7 @@ Arquitectura: Vagrant utiliza como bloques de construcción para los dev-envs:
 - 
 Detalle importante: Vmware y AWS son soportados a via plugins, no de forma nativa.
 
-Otro aspecto destacable de Vagrant: gran comunidad. podremos acceder a una sección de «Docs» donde tendremos toda la documentación de la herramienta explicada en detalle, además, también tenemos una sección de «Community» donde podremos poner en los foros nuestras dudas. Por supuesto, este proyecto está más vivo que nunca, y tendremos desde la web oficial un enlace al proyecto oficial de GitHub donde podremos acceder al código fuente, ver los fallos o bugs que hay y que se han solucionado, y poner dudas sobre el funcionamiento de una determinada función y mucho más. 
+Otro aspecto destacable de Vagrant: gran comunidad. podremos acceder a una sección de "Docs" donde tendremos toda la documentación de la herramienta explicada en detalle, además, también tenemos una sección de "Community" donde podremos poner en los foros nuestras dudas. Por supuesto, este proyecto está más vivo que nunca, y tendremos desde la web oficial un enlace al proyecto oficial de GitHub donde podremos acceder al código fuente, ver los fallos o bugs que hay y que se han solucionado, y poner dudas sobre el funcionamiento de una determinada función y mucho más. 
 
 Por último, Vagrant es ampliamente utilizado por empresas tan conocidas como Mozilla, Expedia, Nokia o Disqus para el dev interno de sus propias herramientas.
 
@@ -58,15 +56,15 @@ El primer paso, como es habitual, es **descargar e instalar*****Vagrant***. Par
 
 A Vagrant, además de ser instalado a través de la GUI, podemos instalarlo desde CLI linux: distribuciones derivadas de Debian: `sudo apt install vagrant`
 
-Una vez instalado, podremos ejecutar el comando **`vagrant`** para un check y listado de opciones.
+Una vez instalado, podremos ejecutar el comando **`vagrant`** para obtener un listado de las opciones. Además de que te servirá para verificar que la app de este sw está instalada correctamente.
 
-Por otro lado, para la creación de una MV podemos recurrir a su [**web de Boxes**](https://app.vagrantup.com/boxes/search) y elegir la más conveniente en el ejemplo lo haremos con Ubuntu xenial.
+Por otro lado, para la creación de una maquína virtual podemos recurrir a su [**web de Boxes**](https://app.vagrantup.com/boxes/search) y elegir la más conveniente en el ejemplo lo haremos con Ubuntu xenial.
 
 ```sh
 vagrant init ubuntu/xenial64
 ```
 
-Tras estos comandos, `vagrant init` descargará/instalará una MV de VirtualBox con el OS Ubuntu 16.04 LTS 64-bit. Luego, genera el fichero de configuración "**Vagrantfile**" (en `.`) y tendrá un contenido similar al siguiente.
+Tras ejecutar estos comandos, `vagrant init` descargará/instalará una MV de VirtualBox con el OS Ubuntu 16.04 LTS 64-bit. Luego genera el fichero de configuración "**Vagrantfile**" (en `.`) y tendrá un contenido similar al siguiente.
 
 ```rb
 VAGRANTFILE_API_VERSION = "2"
@@ -75,13 +73,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 end
 ```
 
-indica que queremos utilizar la imagen `ubuntu/xenial64` como base para nuestra MV.
+indica  que queremos utilizar la imagen `ubuntu/xenial64` como base para nuestra MV.
 
-**`vagrant up`**, descarga -imagenes base-, instala, configura y arranca la MV. En el repo de boxes hay multitud de imágenes de diferentes OSs y podremos utilizar la que más nos ajuste. Contienen instalaciones básicas que *Vagrant* clona para crear nuestra MV. Ojo, las imagenes son "como son" si bien hay canales oficiales.
+**`vagrant up`**, descarga -imagenes base-, instala, configura y arranca la MV. En el repo de boxes hay multitud de imágenes de diferentes OSs y podremos utilizar la que más se ajuste a nuestras necesidades. Contienen instalaciones básicas que *Vagrant* clona para crear nuestra máquina virtual. Ojo, las imagenes son "como son" si bien hay canales oficiales.
 
 ### **Acceso a la MV**
 
-Por defecto Vagrant inicia la MV sin GUI. Podemos accederla via ssh: **`vagrant ssh`** da un prompt a la MV.
+Por defecto, Vagrant inicia la MV sin interfaz gráfica. Podemos accederla via ssh: **`vagrant ssh`** da un prompt a la MV.
 
 Además y por defecto, Vagrant configura el **`.`** (directorio donde está el `Vagrantfile` **y** desde se hizo el `vagrant init`) como un directorio compartido con la MV. ,, todo fichero que dejemos en este será accesible por la MV y viceversa. 
 
@@ -97,7 +95,7 @@ Una vez que hayamos terminado de trabajar con la máquina podemos ejecutar los s
 
 **`vagrant suspend`**: Pausa la MV, guardando estado actual en disco duro. Permite arrancarla de nuevo muy rápidamente con `vagrant up` con el estado exacto en el que se quedó.
 
-**`vagrant halt`**: apagado controlado de la MV Como en el caso anterior, podemos volver a arrancar la MV con «vagrant up», aunque en este caso el arranque es más lento que al hacer un (tiene que volver a iniciar el OS).
+**`vagrant halt`**: apagado controlado de la MV Como en el caso anterior, podemos volver a arrancar la MV con "vagrant up", aunque en este caso el arranque es más lento que al hacer un (tiene que volver a iniciar el OS).
 
 **`vagrant destroy`**: Destruye la MV y todo su contenido.
 
@@ -110,38 +108,35 @@ también se pude hacer "configuración en cascada" (aplicar varios Vagrantfiles,
 
 ### Modificaciones de la MV
 
-Se configuran en el espacio de nombres `config.vm` prefijo que antecede a los parámetros. Ej: modificar el hostname de la máquina:
+Se configuran en el espacio de nombres "config.vm", prefijo que antecede a los parámetros en este caso, por ejemplo, para modificar el hostname de la máquina utilizaríamos:
 
 `config.vm.hostname = "redeszone"`
 
-El resto de parámetros que se pueden modificar los encontramos en la doc **Vagrant: Machine Settings**, (dejamos ahora aspectos como configuración de la red, o la configuración integrada de la MV mediante shell scripts o mediante apps como ansible o puppet.
+El resto de parámetros que se pueden modificar los encontramos en la documentación de **Vagrant: Machine Settings**, dejando en nuestro caso para secciones posteriores algunos de los aspectos que necesitan más dev, como la configuración de la red, o la configuración integrada de la MV mediante shell scripts o mediante aplicaciones como ansible o puppet.
 
-Parámetros relativos a las características de hw hardware de la MV dependen del proveedor en Vagrant, y en el caso de VirtualBox se definen mediante una subsección, veamos de forma prácticas algunos ejemplos de configuración de los ficheros Vagrantfiles.
+Parámetros relativos a las características de hardware de la MV dependen del proveedor en Vagrant, y en el caso de VirtualBox se definen mediante una subsección, veamos de forma prácticas algunos ejemplos de configuración de los ficheros Vagrantfiles.
 
-### Vagrantfiles modificados. cuotas y modo grafico
+### Vagrantfiles modificados para virtualización de máquinas
 
-Cabe cambiar el nombre de la MV, asignar RAM y CPUs -número de núcleos virtuales-. Y la forma habitual de gestionar MVs en Vagrant es mediante la línea de comandos y via ssh,, no tiene mucho sentido una interfaz gráfica, pero en algunas ocasiones es conveniente. 
-
+Realiza las modificaciones apropiadas en un Vagrantfile para cambiar el nombre de la MV, la memoria RAM asignada y el número de núcleos virtuales.
 
 ```rb
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
-VAGRANTFILE_API_VERSION = 2
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "ubuntu/xenial64"
-  config.vm.provider :virtualbox do |vb|
-    vb.name = "myvm"
-    vb.memory = 2048
-    vb.cpus = 4
-    vb.gui = true
-    # vb.linked_clone = true
-  end
+config.vm.provider "virtualbox" do |vb|
+  vb.name = "nombre"
+  vb.memory = "512"
+  vb.cpus = 2
 end
 ```
 
-El aprovisionamiento ligero (thin provisioning) es técnica general en sistemas de virtualización. Consiste en crear un disco de imagen de MV que incluya sólo las modificaciones respecto a una imagen base. Esto implica ahorro significativo de espacio en disco a costa de rendimiento. 
+Como la forma habitual de gestionar máquinas virtuales en Vagrant es mediante la línea de comandos, y accediendo a ellas a través de SSH, no tiene mucho sentido que se arranque una interfaz gráfica, pero en algunas ocasiones es conveniente. Modifica un fichero Vagrantfile para que se inicie la interfaz gráfica de usuario al levantar la máquina.
 
-Un Vagrantfile para que se realice aprovisionamiento ligero:
+```rb
+config.vm.provider "virtualbox" do |vb|
+  b.gui = true
+end
+```
+
+Aprovisionamiento ligero (thin provisioning) es técnica muy utilizada en diferentes sistemas de virtualización, y consiste en crear un disco de imagen de MV que incluya sólo las modificaciones respecto a una imagen base, consiguiendo un ahorro significativo de espacio en disco a costa de una pequeña penalización en rendimiento. Configura un Vagrantfile para que se realice aprovisionamiento ligero.
 
 ```rb
 config.vm.provider "virtualbox" do |vb|
@@ -152,7 +147,7 @@ end
 
 Por otra parte, si se quiere ejecutar sobre una máquina el bloque de aprovisionamiento, el comando a usar es 'vagrant provision'. Aunque la configuración completa de las redes lo dejamos para una sección posterior, una funcionalidad muy útil y sencilla es la redirección de puertos de la red por defecto que utiliza Vagrant (red interna con NAT). Configura un Vagrantfile para que las peticiones al puerto 8080/tcp de la máquina anfitriona se redirijan al puerto 80/tcp de la MV.
 
-La documentación completa se encuentra en **[Forwarded Ports](https://www.vagrantup.com/docs/networking/forwarded_ports.html)**.
+doc completa: **[Forwarded Ports](https://www.vagrantup.com/docs/networking/forwarded_ports.html)**.
 
 `config.vm.network "forwarded_port", guest: 80, host: 8080`
 
@@ -160,44 +155,39 @@ Podemos ver en todo momento los puertos que se has redireccionado con la instruc
 
 `vagrant port`
 
-Estos cambios se pueden realizar sobre una máquina ya funcionando y para
-que se apliquen se utiliza la opción:
+Estos cambios se pueden realizar sobre una máquina ya funcionando y para que se apliquen se utiliza la opción:
 
 `vagrant reload`
 
-En algunas ocasiones, Vagrant no ofrece directamente la posibilidad de hacer cierta configuración específica en la MV, por lo que pierde parte de su atractivo, sin embargo, esto puede solucionarse utilizando comandos, en el caso de utilizar VirtualBox, incluyendo en el fichero Vagrantfile comandos de VBoxManage, como en el siguiente.
+En ocasiones, Vagrant no ofrece directamente la posibilidad de hacer cierta configuración específica en la MV, por lo que pierde parte de su atractivo, sin embargo, esto puede solucionarse utilizando comandos, en el caso de utilizar VirtualBox, incluyendo en el fichero Vagrantfile comandos de VBoxManage, como en el siguiente.
 
 ### Configurar MV disco adicional de 500 GiB
 
 Editamos el fichero Vagrantfile e incluímos las líneas:
 
 ```rb
-> config.vm.provider «virtualbox» do \|vb\|
-> file_to_disk = 'tmp/disk.vdi'
-> unless File.exist?(file_to_disk)
-> vb.customize \['createhd',
-> '--filename', file_to_disk,
-> '--size', 500 \* 1024\]
-> end
->
-> vb.customize \['storageattach', :id,
-> '--storagectl', 'SATAController',
-> '--port', 1,
-> '--device', 0,
-> '--type', 'hdd',
-> '--medium', file_to_disk\]
-> end
+file_to_disk = 'tmp/disk.vdi'
+unless File.exist?(file_to_disk)
+  vb.customize ['createhd',
+    '--filename', file_to_disk,
+    '--size', 500 * 1024]
+  vb.customize ['storageattach', :id,
+    '--storagectl', 'SATAController',
+    '--port', 1,
+    '--device', 0,
+    '--type', 'hdd',
+    '--medium', file_to_disk]
+end
 ```
 
-En el directorio de trabajo podremos ver que se ha creado un fichero en formato vdi.
+En wd/ podremos ver que se un nuevo fichero en formato `vdi`.
 
 ```sh
-> ls -lh
-> -rw-------    1 alejandrojosecaraballogarcia staff 3,0M feb 14 13:50
-> disk.vdi
+> ls -lh -rw
+disk.vdi
 ```
 
-Y desde la MV veremos un disco adicional de 500GiB:
+y desde la MV veremos un disco adicional de 500GiB:
 
 > NAME   MAJ: MIN    RM   SIZE     RO     TYPE MOUNTPOINT
 > sda    8:0                0       40 G     0      disk
@@ -210,10 +200,10 @@ NOTA: Este tipo de configuraciones en las que se pone de forma explícita las ca
 
 `VBoxManage showvminfo NOMBREDELAMV`
 
-Para finalizar veremos la opción «provision», esta opción nos permite la ejecución de comandos en la terminal durante la activación de la máquina, es decir en el momento que nosotros hagamos «vagrant up» y se vayan ejecutando las configuraciones del Vagrantfile, en el momento de llegar a «provision» ejecutará estas órdenes en la terminal. Esto es útil cuando queremos levantar nuestra MV con distintos programas ya instalados, por ejemplo, podríamos poner lo necesario en provisión para que nuestra MV levante un servidor Apache.
+Para finalizar veremos la opción "provision", esta opción nos permite la ejecución de comandos en la terminal durante la activación de la máquina, es decir en el momento que nosotros hagamos "vagrant up" y se vayan ejecutando las configuraciones del Vagrantfile, en el momento de llegar a "provision" ejecutará estas órdenes en la terminal. Esto es útil cuando queremos levantar nuestra MV con distintos programas ya instalados, por ejemplo, podríamos poner lo necesario en provisión para que nuestra MV levante un servidor Apache.
 
 ```rb
-vb.vm.provision «shell», inline: <<-SHELL
+vb.vm.provision "shell", inline: <<-SHELL
     apt-get update
     apt-get upgrade
     apt-get install apache2 -y
@@ -222,7 +212,7 @@ SHELL
 
 En la siguiente imagen podréis observar una configuración para una MV que actuaría como Router en una red.
 
-No solo tenemos la opción del «provision» en algunos casos, algunas máquinas deben de ejecutar el mismo «provision» y no por ello debemos de estar repitiéndolo. Podemos crear una variable \$shell con todo el «provision» y en las máquinas ejecutar dicha variable.
+No solo tenemos la opción del "provision" en algunos casos, algunas máquinas deben de ejecutar el mismo "provision" y no por ello debemos de estar repitiéndolo. Podemos crear una variable \$shell con todo el "provision" y en las máquinas ejecutar dicha variable.
 
 ## Otras funcionalidades de Vagrant:
 
@@ -234,10 +224,10 @@ No solo tenemos la opción del «provision» en algunos casos, algunas máquinas
 - **Compartir entornos**: en el momento que tenemos un servidor web que se está ejecutando y es accesible desde la máquina, podemos
     disponer de un entorno de dev que nos facilita compartir y colaborar con otros entornos. Esto se llama Vagrant Share. Esto quiere decir que podremos compartir el entorno con cualquier persona, a la cual daremos una URL que se enruta directamente al entorno, pudiendo conectarse desde cualquier dispositivo.
 
-- **Reconstrucción de entornos**: cuando trabajamos con este tipo de entornos, puede darse el caso de que alguno se deje de usar por un determinado periodo de tiempo. Esto no será problema, pues podremos retomarlo cuando sea necesario. Con el comando «vagrant up», este hará una recreación del mismo, y lo ejecuta.
+- **Reconstrucción de entornos**: cuando trabajamos con este tipo de entornos, puede darse el caso de que alguno se deje de usar por un determinado periodo de tiempo. Esto no será problema, pues podremos retomarlo cuando sea necesario. Con el comando "vagrant up", este hará una recreación del mismo, y lo ejecuta.
 
 - **Derribar entornos**: una vez hemos acabado de trabajar con un determinado entorno de dev, podemos detenerlo, apagarlo o
-    directamente destruirlo. Si optamos por suspender, esta guardará el estado anterior al momento de realizar la suspensión, de esta forma al querer trabajar de nuevo con ella, hacemos un «up», y ya se ejecuta de nuevo. Si la detenemos esta se parará por completo, de forma que al iniciarla esta se ejecutará como una nueva sesión, y finalmente la destrucción, donde eliminaremos todo rastro que pueda quedar de la máquina.
+    directamente destruirlo. Si optamos por suspender, esta guardará el estado anterior al momento de realizar la suspensión, de esta forma al querer trabajar de nuevo con ella, hacemos un "up", y ya se ejecuta de nuevo. Si la detenemos esta se parará por completo, de forma que al iniciarla esta se ejecutará como una nueva sesión, y finalmente la destrucción, donde eliminaremos todo rastro que pueda quedar de la máquina.
 
 Tal y como habéis visto, necesitaremos tener conocimientos básicos de bash para configurar correctamente Vagrant y automatizar todo el trabajo de crear un entorno de dev portable, esta herramienta es realmente útil y utilizado ampliamente en empresas donde se hagan diferentes devs.
 
@@ -273,8 +263,6 @@ Por lo general, Vagrant es **una herramienta muy completa**, pero puede ser que 
 Como puedes ver, son muchas las posibilidades que tenemos a la hora de elegir las mejores herramientas. Lo mejor que podemos hacer, es contrastar lo que necesitamos con las funcionalidades de cada una. De esta forma, tendremos que la mejor se ajusta a nuestras necesidades.
 
 SEE ALSO [THIS](https://www.youtube.com/watch?v=GhYm4IvkLQA)
-
-
 
 ## post
 
